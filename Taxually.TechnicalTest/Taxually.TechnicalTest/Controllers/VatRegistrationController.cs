@@ -10,6 +10,15 @@ namespace Taxually.TechnicalTest.Controllers
     [ApiController]
     public class VatRegistrationController : ControllerBase
     {
+        private readonly ITaxuallyHttpClient _taxuallyHttpClient;
+        private readonly ITaxuallyQueueClient _taxuallyQueueClient;
+
+        public VatRegistrationController(ITaxuallyHttpClient taxuallyHttpClient, ITaxuallyQueueClient taxuallyQueueClient)
+        {
+            _taxuallyHttpClient = taxuallyHttpClient;
+            _taxuallyQueueClient = taxuallyQueueClient;
+        }
+
         /// <summary>
         /// Registers a company for a VAT number in a given country
         /// </summary>
@@ -20,8 +29,7 @@ namespace Taxually.TechnicalTest.Controllers
             {
                 case "GB":
                     // UK has an API to register for a VAT number
-                    var httpClient = new TaxuallyHttpClient();
-                    httpClient.PostAsync("https://api.uktax.gov.uk", request).Wait();
+                    await _taxuallyHttpClient.PostAsync("https://api.uktax.gov.uk", request);
                     break;
                 case "FR":
                     // France requires an excel spreadsheet to be uploaded to register for a VAT number
@@ -29,9 +37,8 @@ namespace Taxually.TechnicalTest.Controllers
                     csvBuilder.AppendLine("CompanyName,CompanyId");
                     csvBuilder.AppendLine($"{request.CompanyName}{request.CompanyId}");
                     var csv = Encoding.UTF8.GetBytes(csvBuilder.ToString());
-                    var excelQueueClient = new TaxuallyQueueClient();
                     // Queue file to be processed
-                    excelQueueClient.EnqueueAsync("vat-registration-csv", csv).Wait();
+                    await _taxuallyQueueClient.EnqueueAsync("vat-registration-csv", csv);
                     break;
                 case "DE":
                     // Germany requires an XML document to be uploaded to register for a VAT number
@@ -42,7 +49,7 @@ namespace Taxually.TechnicalTest.Controllers
                         var xml = stringwriter.ToString();
                         var xmlQueueClient = new TaxuallyQueueClient();
                         // Queue xml doc to be processed
-                        xmlQueueClient.EnqueueAsync("vat-registration-xml", xml).Wait();
+                        await _taxuallyQueueClient.EnqueueAsync("vat-registration-xml", xml);
                     }
                     break;
                 default:
