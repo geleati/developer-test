@@ -7,6 +7,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Taxually.TechnicalTest", "T
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Taxually.TechnicalTest.Test", "Taxually.TechnicalTest.Test\Taxually.TechnicalTest.Test.csproj", "{B01B989A-73DC-479D-B689-8C2373DBDAC4}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Taxually.TechnicalTest.Core", "Taxually.TechnicalTest.Core\Taxually.TechnicalTest.Core.csproj", "{89BC4287-602F-4C84-A95A-89BFFA98B370}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Taxually.TechnicalTest.Core.Test", "Taxually.TechnicalTest.Core.Test\Taxually.TechnicalTest.Core.Test.csproj", "{6D2F9C40-76CE-427A-BCCD-EB5AEE9D81AB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +25,14 @@ Global
 		{B01B989A-73DC-479D-B689-8C2373DBDAC4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B01B989A-73DC-479D-B689-8C2373DBDAC4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B01B989A-73DC-479D-B689-8C2373DBDAC4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{89BC4287-602F-4C84-A95A-89BFFA98B370}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{89BC4287-602F-4C84-A95A-89BFFA98B370}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{89BC4287-602F-4C84-A95A-89BFFA98B370}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{89BC4287-602F-4C84-A95A-89BFFA98B370}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6D2F9C40-76CE-427A-BCCD-EB5AEE9D81AB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6D2F9C40-76CE-427A-BCCD-EB5AEE9D81AB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6D2F9C40-76CE-427A-BCCD-EB5AEE9D81AB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6D2F9C40-76CE-427A-BCCD-EB5AEE9D81AB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

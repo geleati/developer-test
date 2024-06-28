@@ -1,10 +1,10 @@
-using Taxually.TechnicalTest;
+using Taxually.TechnicalTest.Core;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddSingleton<ITaxuallyHttpClient, TaxuallyHttpClient>();
-builder.Services.AddSingleton<ITaxuallyQueueClient, TaxuallyQueueClient>();
+var startup = new Startup(builder.Configuration);
+startup.ConfigureServices(builder.Services);
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

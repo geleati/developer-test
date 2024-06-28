@@ -17,6 +17,7 @@ public class PostTests
     private HttpClient _client;
     private ITaxuallyHttpClient _taxuallyHttpClient;
     private ITaxuallyQueueClient _taxuallyQueueClient;
+    private string _inputUrl = "http://localhost/api/VatRegistration";
 
     [OneTimeSetUp]
     public void FixtureSetup()
@@ -35,7 +36,6 @@ public class PostTests
     public async Task GivenRequest_WhenPost_ThenHttpClientCalledAndOkResponseShouldBeReturned()
     {
         // Arrange
-        string inputUrl = "http://localhost/api/VatRegistration";
         var vatRegistrationRequest = new VatRegistrationRequest
         {
             Country = "GB",
@@ -49,7 +49,7 @@ public class PostTests
             "application/json");
 
         // Act
-        var result = await _client.PostAsync(inputUrl, jsonContent);
+        var result = await _client.PostAsync(_inputUrl, jsonContent);
 
         // Assert
         result.StatusCode.Should().Be(HttpStatusCode.OK);
@@ -60,7 +60,6 @@ public class PostTests
     public async Task GivenRequest_WhenPost_ThenQueueClientCalledAndOkResponseShouldBeReturned()
     {
         // Arrange
-        string inputUrl = "http://localhost/api/VatRegistration";
         var vatRegistrationRequest = new VatRegistrationRequest
         {
             Country = "FR",
@@ -75,7 +74,7 @@ public class PostTests
             "application/json");
 
         // Act
-        var result = await _client.PostAsync(inputUrl, jsonContent);
+        var result = await _client.PostAsync(_inputUrl, jsonContent);
 
         // Assert
         result.StatusCode.Should().Be(HttpStatusCode.OK);
@@ -83,10 +82,9 @@ public class PostTests
     }
 
     [Test]
-    public async Task GivenVatRequestForCountryDE_WhenPost_ThenInvalidOperationExceptionShouldBeThrown()
+    public async Task GivenVatRequestForCountryDE_WhenPost_ThenQueueClientCalledAndOkResponseShouldBeReturned()
     {
         // Arrange
-        string inputUrl = "http://localhost/api/VatRegistration";
         var vatRegistrationRequest = new VatRegistrationRequest
         {
             Country = "DE",
@@ -97,20 +95,20 @@ public class PostTests
            JsonSerializer.Serialize(vatRegistrationRequest),
            Encoding.UTF8,
            "application/json");
+        var xml = await File.ReadAllTextAsync(@"..\..\..\VatRegistrationControllerTests\Integration\DE.xml");
 
         // Act
-        var result = await _client.PostAsync(inputUrl, jsonContent);
+        var result = await _client.PostAsync(_inputUrl, jsonContent);
 
         // Assert
-        result.StatusCode.Should().Be(HttpStatusCode.InternalServerError);
-        await _taxuallyQueueClient.DidNotReceive().EnqueueAsync(Arg.Any<string>(), Arg.Any<VatRegistrationRequest>());
+        result.StatusCode.Should().Be(HttpStatusCode.OK);
+        await _taxuallyQueueClient.Received(1).EnqueueAsync("vat-registration-xml", xml);
     }
 
     [Test]
     public async Task GivenVatRequestForUnsupportedCountry_WhenPost_ThenInvalidOperationExceptionShouldBeThrown()
     {
-        // Arrange
-        string inputUrl = "http://localhost/api/VatRegistration";
+        // Arrange      
         var vatRegistrationRequest = new VatRegistrationRequest
         {
             Country = "HU",
@@ -123,13 +121,12 @@ public class PostTests
            "application/json");
 
         // Act
-        var result = await _client.PostAsync(inputUrl, jsonContent);
+        var result = await _client.PostAsync(_inputUrl, jsonContent);
 
         // Assert
         result.StatusCode.Should().Be(HttpStatusCode.InternalServerError);
         await _taxuallyQueueClient.DidNotReceive().EnqueueAsync(Arg.Any<string>(), Arg.Any<VatRegistrationRequest>());
     }
-
 }
 
 public class IntegrationTestWebApplicationFactory : WebApplicationFactory<Program>
@@ -137,6 +134,5 @@ public class IntegrationTestWebApplicationFactory : WebApplicationFactory<Progra
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
         builder.ConfigureAppConfiguration((host, configurationBuilder) => { });
-
     }
 }
