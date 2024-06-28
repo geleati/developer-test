@@ -11,7 +11,7 @@ namespace Taxually.TechnicalTest.Test.VatRegistrationProcessorFactoryTests.Integ
 public class CreateTests
 {
     private IVatRegistrationProcessorFactory _vatRegistrationProcessorFactory;
-    private IServiceProvider ServiceProvider { get; }
+    private IServiceProvider _serviceProvider;
 
     public CreateTests()
     {
@@ -22,7 +22,7 @@ public class CreateTests
         var startup = new Startup(configuration);
         startup.ConfigureServices(services);
 
-        ServiceProvider = services.BuildServiceProvider(new ServiceProviderOptions
+        _serviceProvider = services.BuildServiceProvider(new ServiceProviderOptions
         {
             ValidateOnBuild = true,
             ValidateScopes = true
@@ -32,7 +32,7 @@ public class CreateTests
     [SetUp]
     public void Setup()
     {
-        _vatRegistrationProcessorFactory = ServiceProvider.GetRequiredService<IVatRegistrationProcessorFactory>();
+        _vatRegistrationProcessorFactory = _serviceProvider.GetRequiredService<IVatRegistrationProcessorFactory>();
     }
 
     [TestCase("GB", typeof(IApiVatRegistrationProcessor))]

@@ -22,18 +22,29 @@ public class VatRegistrationProcessorFactory : IVatRegistrationProcessorFactory
         };
     }
 
+    /// <summary>
+    /// Instantiate a particular instance of IVatRegistrationProcessor implementation for the given country
+    /// </summary>
+    /// <param name="countryCode">Country code</param>
+    /// <returns>Instance of IVatRegistrationProcessor implementation</returns>
+    /// <exception cref="NotSupportedException">Exception is thrown if there is no implementation for the given country</exception>
     public IVatRegistrationProcessor Create(string countryCode)
     {
-        if (!_vatRegistrationProcessorsFactrory.TryGetValue(countryCode, out var processorFactrory))
+        if (!_vatRegistrationProcessorsFactrory.TryGetValue(countryCode, out var processorFactory))
         {
             throw new NotSupportedException("Not supported country");
         }
 
-        return processorFactrory();
+        return processorFactory();
     }
 }
 
 public interface IVatRegistrationProcessor
 {
+    /// <summary>
+    /// Processing the given request for vat registration
+    /// </summary>
+    /// <param name="request">VatRegistrationRequest</param>
+    /// <returns></returns>
     Task Process(VatRegistrationRequest request);
 }
