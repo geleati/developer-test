@@ -13,7 +13,7 @@ namespace Taxually.TechnicalTest.Test.VatRegistrationControllerTests.Integration
 
 public class PostTests
 {
-    private IntegrationTestWebApplicationFactory _factory;
+    private WebApplicationFactory<Program> _factory;
     private HttpClient _client;
     private ITaxuallyHttpClient _taxuallyHttpClient;
     private ITaxuallyQueueClient _taxuallyQueueClient;
@@ -22,7 +22,7 @@ public class PostTests
     [OneTimeSetUp]
     public void FixtureSetup()
     {
-        _factory = new IntegrationTestWebApplicationFactory();
+        _factory = new WebApplicationFactory<Program>();
         _taxuallyHttpClient = Substitute.For<ITaxuallyHttpClient>();
         _taxuallyQueueClient = Substitute.For<ITaxuallyQueueClient>();
         _client = _factory.WithWebHostBuilder(builder => builder.ConfigureServices(services =>
@@ -106,7 +106,7 @@ public class PostTests
     }
 
     [Test]
-    public async Task GivenVatRequestForUnsupportedCountry_WhenPost_ThenInvalidOperationExceptionShouldBeThrown()
+    public async Task GivenVatRequestForUnsupportedCountry_WhenPost_ThenInternalServerErrorResponseShouldBeReturned()
     {
         // Arrange      
         var vatRegistrationRequest = new VatRegistrationRequest
@@ -126,13 +126,5 @@ public class PostTests
         // Assert
         result.StatusCode.Should().Be(HttpStatusCode.InternalServerError);
         await _taxuallyQueueClient.DidNotReceive().EnqueueAsync(Arg.Any<string>(), Arg.Any<VatRegistrationRequest>());
-    }
-}
-
-public class IntegrationTestWebApplicationFactory : WebApplicationFactory<Program>
-{
-    protected override void ConfigureWebHost(IWebHostBuilder builder)
-    {
-        builder.ConfigureAppConfiguration((host, configurationBuilder) => { });
     }
 }

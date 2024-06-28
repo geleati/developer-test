@@ -5,7 +5,7 @@ using NUnit.Framework.Internal;
 using Taxually.TechnicalTest.Core;
 using Taxually.TechnicalTest.Core.Processors;
 
-namespace Taxually.TechnicalTest.Test.VatRegistrationFactoryTests.Integration;
+namespace Taxually.TechnicalTest.Test.VatRegistrationProcessorFactoryTests.Integration;
 
 [TestFixture]
 public class CreateTests
