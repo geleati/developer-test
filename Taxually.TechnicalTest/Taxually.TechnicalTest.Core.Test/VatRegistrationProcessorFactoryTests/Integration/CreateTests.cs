@@ -16,17 +16,11 @@ public class CreateTests
     public CreateTests()
     {
         var services = new ServiceCollection();
-        var configuration = new ConfigurationBuilder()
-            .Build();
 
-        var startup = new Startup(configuration);
+        var startup = new Startup();
         startup.ConfigureServices(services);
 
-        _serviceProvider = services.BuildServiceProvider(new ServiceProviderOptions
-        {
-            ValidateOnBuild = true,
-            ValidateScopes = true
-        });
+        _serviceProvider = services.BuildServiceProvider(new ServiceProviderOptions());
     }
 
     [SetUp]
@@ -35,9 +29,9 @@ public class CreateTests
         _vatRegistrationProcessorFactory = _serviceProvider.GetRequiredService<IVatRegistrationProcessorFactory>();
     }
 
-    [TestCase("GB", typeof(IApiVatRegistrationProcessor))]
-    [TestCase("FR", typeof(ICsvVatRegistrationProcessor))]
-    [TestCase("DE", typeof(IXmlVatRegistrationProcessor))]
+    [TestCase("GB", typeof(ApiVatRegistrationProcessor))]
+    [TestCase("FR", typeof(CsvVatRegistrationProcessor))]
+    [TestCase("DE", typeof(XmlVatRegistrationProcessor))]
     public void GivenCountryCode_WhenCreateProcessor_ThenProcessorWithExpectedTypeShouldBeReturned(string countryCode, Type processorType)
     {
         // Act
@@ -54,6 +48,6 @@ public class CreateTests
         var action = () => _vatRegistrationProcessorFactory.Create("HU");
 
         // Assert
-        action.Should().Throw<NotSupportedException>().WithMessage("Not supported country");
+        action.Should().Throw<NotSupportedException>().WithMessage("Not supported country: HU");
     }
 }

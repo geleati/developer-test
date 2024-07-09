@@ -12,7 +12,8 @@ public class XmlVatregistrationProcessorTests
     {
         // Arrange
         var queueClient = Substitute.For<ITaxuallyQueueClient>();
-        var processor = new XmlVatRegistrationProcessor(queueClient);
+        var xmlSerialization = Substitute.For<IXmlSerialization<VatRegistrationRequest>>();     
+        var processor = new XmlVatRegistrationProcessor(queueClient, xmlSerialization);
         var vatRegistrationRequest = new VatRegistrationRequest
         {
             Country = "DE",
@@ -20,6 +21,7 @@ public class XmlVatregistrationProcessorTests
             CompanyName = "CompanyName_1"
         };
         var xml = await File.ReadAllTextAsync(@"..\..\..\VatRegistrationProcessorTests\Unit\DE.xml");
+        xmlSerialization.Serialize(vatRegistrationRequest).Returns(xml);
 
         // Act
         await processor.Process(vatRegistrationRequest);

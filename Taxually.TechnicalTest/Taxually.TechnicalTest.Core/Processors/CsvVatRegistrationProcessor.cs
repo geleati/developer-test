@@ -3,14 +3,10 @@ using Taxually.TechnicalTest.Core.Model;
 
 namespace Taxually.TechnicalTest.Core.Processors;
 
-public interface ICsvVatRegistrationProcessor : IVatRegistrationProcessor 
-{
-}
-
-public class CsvVatRegistrationProcessor : ICsvVatRegistrationProcessor
+public class CsvVatRegistrationProcessor : VatRegistrationProcessorBase, IVatRegistrationProcessor
 {
     private readonly ITaxuallyQueueClient _taxuallyQueueClient;
-
+    public override string HandledCountryCode => "FR";
     public CsvVatRegistrationProcessor(ITaxuallyQueueClient taxuallyQueueClient)
     {
         _taxuallyQueueClient = taxuallyQueueClient;

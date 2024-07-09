@@ -1,5 +1,4 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-using Taxually.TechnicalTest.Core.Model;
+﻿using Taxually.TechnicalTest.Core.Model;
 
 namespace Taxually.TechnicalTest.Core.Processors;
 
@@ -10,16 +9,11 @@ public interface IVatRegistrationProcessorFactory
 
 public class VatRegistrationProcessorFactory : IVatRegistrationProcessorFactory
 {
-    private readonly Dictionary<string, Func<IVatRegistrationProcessor>> _vatRegistrationProcessorsFactrory;
+    private readonly IEnumerable<IVatRegistrationProcessor> _vatRegistrationProcessors;
 
-    public VatRegistrationProcessorFactory(IServiceProvider serviceProvider)
+    public VatRegistrationProcessorFactory(IEnumerable<IVatRegistrationProcessor> vatRegistrationProcessors)
     {
-        _vatRegistrationProcessorsFactrory = new Dictionary<string, Func<IVatRegistrationProcessor>>()
-        {
-            { "GB", () => serviceProvider.GetRequiredService<IApiVatRegistrationProcessor>() },
-            { "FR", () => serviceProvider.GetRequiredService<ICsvVatRegistrationProcessor>() },
-            { "DE", () => serviceProvider.GetRequiredService<IXmlVatRegistrationProcessor>() }
-        };
+        _vatRegistrationProcessors = vatRegistrationProcessors;
     }
 
     /// <summary>
@@ -30,16 +24,11 @@ public class VatRegistrationProcessorFactory : IVatRegistrationProcessorFactory
     /// <exception cref="NotSupportedException">Exception is thrown if there is no implementation for the given country</exception>
     public IVatRegistrationProcessor Create(string countryCode)
     {
-        if (!_vatRegistrationProcessorsFactrory.TryGetValue(countryCode, out var processorFactory))
-        {
-            throw new NotSupportedException("Not supported country");
-        }
-
-        return processorFactory();
+        return _vatRegistrationProcessors.FirstOrDefault(vrp => vrp.CanHandle(countryCode)) ?? throw new NotSupportedException($"Not supported country: {countryCode}");
     }
 }
 
-public interface IVatRegistrationProcessor
+public interface IVatRegistrationProcessor : IVatRegistrationProcessorBase
 {
     /// <summary>
     /// Processing the given request for vat registration
@@ -47,4 +36,9 @@ public interface IVatRegistrationProcessor
     /// <param name="request">VatRegistrationRequest</param>
     /// <returns></returns>
     Task Process(VatRegistrationRequest request);
+}
+
+public interface IVatRegistrationProcessorBase
+{
+    bool CanHandle(string countryCode);
 }

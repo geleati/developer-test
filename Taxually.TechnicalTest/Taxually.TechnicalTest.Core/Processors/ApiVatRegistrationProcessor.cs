@@ -2,13 +2,10 @@
 
 namespace Taxually.TechnicalTest.Core.Processors;
 
-public interface IApiVatRegistrationProcessor : IVatRegistrationProcessor 
-{
-}
-
-public class ApiVatRegistrationProcessor : IApiVatRegistrationProcessor
+public class ApiVatRegistrationProcessor : VatRegistrationProcessorBase, IVatRegistrationProcessor
 {
     private readonly ITaxuallyHttpClient _taxuallyHttpClient;
+    public override string HandledCountryCode => "GB";
 
     public ApiVatRegistrationProcessor(ITaxuallyHttpClient taxuallyHttpClient)
     {

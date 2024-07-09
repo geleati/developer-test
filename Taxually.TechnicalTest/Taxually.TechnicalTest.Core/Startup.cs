@@ -6,20 +6,15 @@ namespace Taxually.TechnicalTest.Core;
 
 public class Startup
 {
-    public IConfiguration Configuration { get; }
-
-    public Startup(IConfiguration configuration)
-    {
-        Configuration = configuration;
-    }
-
     public void ConfigureServices(IServiceCollection services)
      {
-        services.AddSingleton<ITaxuallyHttpClient, TaxuallyHttpClient>();
-        services.AddSingleton<ITaxuallyQueueClient, TaxuallyQueueClient>();
-        services.AddSingleton<IVatRegistrationProcessorFactory, VatRegistrationProcessorFactory>();
-        services.AddSingleton<IApiVatRegistrationProcessor, ApiVatRegistrationProcessor>();
-        services.AddSingleton<ICsvVatRegistrationProcessor, CsvVatRegistrationProcessor>();
-        services.AddSingleton<IXmlVatRegistrationProcessor, XmlVatRegistrationProcessor>();
+        services.AddScoped<ITaxuallyHttpClient, TaxuallyHttpClient>();
+        services.AddScoped<ITaxuallyQueueClient, TaxuallyQueueClient>();
+        services.AddScoped<IVatRegistrationProcessorFactory, VatRegistrationProcessorFactory>();
+        services.AddScoped<IVatRegistrationProcessor, ApiVatRegistrationProcessor>();
+        services.AddScoped<IVatRegistrationProcessor, CsvVatRegistrationProcessor>();
+        services.AddScoped<IVatRegistrationProcessor, XmlVatRegistrationProcessor>();
+        services.AddScoped(typeof(IXmlSerialization<>), typeof(XmlSerialization<>));
     }
 }
+
